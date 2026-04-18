@@ -6,12 +6,48 @@ on:
 
 permissions:
   contents: read
+  issues: write
   pull-requests: write
 
 jobs:
   label:
     runs-on: ubuntu-latest
     steps:
+      - name: Ensure labels exist
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const labels = [
+              { name: 'javascript', color: 'f1e05a', description: 'Changes in JavaScript files' },
+              { name: 'html', color: 'e34c26', description: 'Changes in HTML files' },
+              { name: 'css', color: '563d7c', description: 'Changes in CSS files' },
+              { name: 'documentation', color: '0075ca', description: 'Changes in docs and markdown files' },
+              { name: 'github-config', color: '24292f', description: 'Changes in GitHub workflow/config files' }
+            ];
+
+            for (const label of labels) {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label.name
+                });
+              } catch (error) {
+                if (error.status === 404) {
+                  await github.rest.issues.createLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    name: label.name,
+                    color: label.color,
+                    description: label.description
+                  });
+                } else {
+                  throw error;
+                }
+              }
+            }
+
       - name: Label PR based on changed files
         uses: actions/labeler@v5
         with:
