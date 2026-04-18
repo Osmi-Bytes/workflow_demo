@@ -1,0 +1,19 @@
+javascript:
+  - changed-files:
+      - any-glob-to-any-file: ['**/*.js']
+
+html:
+  - changed-files:
+      - any-glob-to-any-file: ['**/*.html']
+
+css:
+  - changed-files:
+      - any-glob-to-any-file: ['**/*.css']
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ['**/*.md', 'docs/**']
+
+github-config:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**']
